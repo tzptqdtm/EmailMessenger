@@ -1,5 +1,6 @@
 ﻿using EmailMessenger.Core.Services.Email;
 using EmailMessenger.Data.DataServices;
+using EmailMessenger.Models.Data;
 using Hangfire;
 using Microsoft.Extensions.Logging;
 
@@ -16,24 +17,24 @@ public class JobRunnerService : IJobRunnerService
         _dataService = dataService;
         _backgroundJobClient = backgroundJobClient;
     }
-    
 
-    public async Task RunNewJob()
+
+    public async Task RunNewJob(Guid guid)
     {
-        while (true)
+
+        var messageEventsIds = await _dataService.GetMessageEventsIds(guid);
+
+        if (messageEventsIds.Count == 0)
         {
-            var messageEventId = await _dataService.GetNextMessageEventId();
-
-            if (messageEventId == null || messageEventId.Value == 0)
-            {
-                break;
-            }
-
-            _backgroundJobClient.Enqueue<IMessageEventHandler>(handler => handler.HandleMessageEvent(messageEventId.Value));
-
-            await _dataService.SetMessageEventInQueueAsync(messageEventId.Value);
-
+            return;
         }
+
+        foreach (var id in messageEventsIds)
+        {
+            _backgroundJobClient.Enqueue<IMessageEventHandler>(handler => handler.HandleMessageEvent(id));
+
+            await _dataService.SetMessageEventInQueueAsync(id);
+        }
+
     }
-    
 }

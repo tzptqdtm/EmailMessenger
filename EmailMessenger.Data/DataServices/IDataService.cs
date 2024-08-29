@@ -40,11 +40,12 @@ public interface IDataService
     /// <param name="messageEvent"></param>
     /// <returns></returns>
     Task<int> CreateMessageEventAsync(MessageEvent messageEvent);
+
     /// <summary>
     /// Получает следующий id события отправки сообщения
     /// </summary>
     /// <returns></returns>
-    Task<long?> GetNextMessageEventId();
+    Task<List<long>> GetMessageEventsIds(Guid guid);
     /// <summary>
     /// Получает событие отправки сообщения по указанному id
     /// </summary>

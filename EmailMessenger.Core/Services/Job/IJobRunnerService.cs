@@ -6,5 +6,5 @@ public interface IJobRunnerService
     /// Добавляет задачу по отправке новых сообщений в очередь на выполнение
     /// </summary>
     /// <returns></returns>
-    Task RunNewJob();
+    Task RunNewJob(Guid guid);
 }

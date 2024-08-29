@@ -135,14 +135,14 @@ public class DataService : IDataService, IDisposable
         return await _dataSource.SaveChangesAsync();
     }
 
-    public async Task<long?> GetNextMessageEventId()
+    public async Task<List<long>> GetMessageEventsIds(Guid guid)
     {
-        var id = await _dataSource.MessageEvents
-            .Where(e=>e.Result=="Planned")
+        var ids = await _dataSource.MessageEvents
+            .Where(e=>e.Result=="Planned" && e.MessageId == guid)
             .OrderBy(e => e.Id)
             .Select(e => e.Id)
-            .FirstOrDefaultAsync();
-        return id;
+            .ToListAsync();
+        return ids;
     }
 
     public async Task<MessageEvent?> GetMessageEventAsync(long id)

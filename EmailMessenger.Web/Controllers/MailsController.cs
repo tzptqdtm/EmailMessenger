@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using EmailMessenger.Core.Services.Email;
 using EmailMessenger.Core.Services.Job;
 using EmailMessenger.Data.DataServices;
+using EmailMessenger.Models.Data;
 using EmailMessenger.Models.Web;
 using Hangfire;
 using Microsoft.AspNetCore.Http;
@@ -15,10 +16,12 @@ public class MailsController : ControllerBase
 {
     private readonly ILogger<MailsController> _logger;
     private readonly IDataService _dataService;
-    public MailsController(ILogger<MailsController> logger, IDataService dataService)
+    private readonly IBackgroundJobClient _backgroundJobClient;
+    public MailsController(ILogger<MailsController> logger, IDataService dataService, IBackgroundJobClient backgroundJobClient)
     {
         _logger = logger;
         _dataService = dataService;
+        _backgroundJobClient = backgroundJobClient;
     }
 
     /// <summary>
@@ -56,6 +59,8 @@ public class MailsController : ControllerBase
         {
             var guid = await _dataService.CreateMessageAsync(request);
 
+            _backgroundJobClient.Enqueue<IJobScheduler>(scheduler => scheduler.ScheduleNewJob(guid));
+            
             return Ok(guid.ToString());
         }
         catch (Exception ex)

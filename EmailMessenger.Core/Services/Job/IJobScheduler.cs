@@ -6,5 +6,5 @@ public interface IJobScheduler
     /// Добавляем задачи на отправку сообщений каждому получателю в базе данных
     /// </summary>
     /// <returns></returns>
-    Task ScheduleNewJob();
+    Task ScheduleNewJob(Guid guid);
 }

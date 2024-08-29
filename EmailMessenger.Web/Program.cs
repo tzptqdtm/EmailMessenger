@@ -49,9 +49,6 @@ public class Program
             builder.Services.Configure<MailSettings>(
                 builder.Configuration.GetSection("MailSettings"));
 
-            builder.Services.Configure<JobSchedulerSettings>(
-                builder.Configuration.GetSection("JobSchedulerSettings"));
-
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseNpgsql(builder.Configuration.GetSection("DatabaseSettings:ConnectionString").Value,
@@ -97,7 +94,7 @@ public class Program
 
             app.UseHangfireDashboard("/dashboard");
 
-            app.ConfigureNewMessageHandler();
+            //app.ConfigureNewMessageHandler();
             
             app.Run();
         }
