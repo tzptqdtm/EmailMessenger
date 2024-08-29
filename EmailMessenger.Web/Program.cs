@@ -93,8 +93,6 @@ public class Program
             app.MapControllers();
 
             app.UseHangfireDashboard("/dashboard");
-
-            //app.ConfigureNewMessageHandler();
             
             app.Run();
         }
